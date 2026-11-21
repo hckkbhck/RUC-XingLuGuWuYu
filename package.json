@@ -1,0 +1,11 @@
+{
+  "name": "ruc-campus-walk",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node tools/serve.mjs . 4173",
+    "build": "node tools/build.mjs",
+    "preview": "node tools/serve.mjs dist 4174 /campus"
+  }
+}
