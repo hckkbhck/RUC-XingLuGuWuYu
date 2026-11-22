@@ -1,0 +1,12 @@
+{
+  "name": "RUC物语",
+  "platform": "web-desktop",
+  "buildPath": "project://build",
+  "outputName": "web-desktop",
+  "startScene": "93417673-cbe1-5301-81f0-b8cec12c8d24",
+  "scenes": [
+    { "url": "db://assets/scenes/Campus-ZGC.scene", "uuid": "93417673-cbe1-5301-81f0-b8cec12c8d24" }
+  ],
+  "debug": false,
+  "md5Cache": false
+}

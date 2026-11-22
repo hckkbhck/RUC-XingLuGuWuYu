@@ -1,0 +1,17 @@
+{
+  "base": "campus-fountain-base.png",
+  "sheet": "campus-fountain-cycle.png",
+  "overlay": "campus-fountain-water-fx.png",
+  "frameWidth": 128,
+  "frameHeight": 96,
+  "columns": 4,
+  "rows": 3,
+  "frameCount": 12,
+  "frameDurationMs": 100,
+  "order": "row-major",
+  "loop": true,
+  "anchorPx": {
+    "x": 64,
+    "y": 91
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "treeSheet": "pine-tree-sway.png",
+  "needleOverlaySheet": "pine-tree-needles.png",
+  "frameWidth": 144,
+  "frameHeight": 144,
+  "frameCount": 12,
+  "frameDurationMs": 150,
+  "anchorPx": {
+    "x": 72,
+    "y": 135
+  },
+  "animationLoops": true,
+  "variants": [
+    {
+      "id": "layered",
+      "row": 0
+    },
+    {
+      "id": "tall",
+      "row": 1
+    },
+    {
+      "id": "wide",
+      "row": 2
+    },
+    {
+      "id": "crooked",
+      "row": 3
+    }
+  ]
+}

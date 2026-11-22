@@ -1,0 +1,31 @@
+{
+  "treeSheet": "autumn-tree-sway.png",
+  "leafOverlaySheet": "autumn-tree-leaves.png",
+  "frameWidth": 144,
+  "frameHeight": 144,
+  "frameCount": 12,
+  "frameDurationMs": 150,
+  "anchorPx": {
+    "x": 72,
+    "y": 135
+  },
+  "animationLoops": true,
+  "variants": [
+    {
+      "id": "rounded-gold",
+      "row": 0
+    },
+    {
+      "id": "tall-amber",
+      "row": 1
+    },
+    {
+      "id": "wide-gold",
+      "row": 2
+    },
+    {
+      "id": "asymmetric-ochre",
+      "row": 3
+    }
+  ]
+}

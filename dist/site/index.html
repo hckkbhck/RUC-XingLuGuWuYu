@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#203d34">
+  <meta name="description" content="在《RUC物语》中漫游中国人民大学中关村和通州校区，探索地点并留下个人足迹。">
+  <meta property="og:title" content="RUC物语">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./game/ui.css">
+  <link rel="stylesheet" href="./game/activity.css">
+  <link rel="stylesheet" href="./game/canteen/menu.css">
+  <link rel="stylesheet" href="./src/profile.css">
+  <link rel="stylesheet" href="./game/memories/album.css">
+  <link rel="stylesheet" href="./game/memories/wall.css">
+  <link rel="stylesheet" href="./game/memories/exploration.css">
+  <link rel="stylesheet" href="./game/tasks/board.css">
+  <link rel="stylesheet" href="./game/place-type.css">
+  <link rel="stylesheet" href="./game/building-panels.css">
+  <title>RUC物语</title>
+</head>
+<body>
+  <main id="game-shell" aria-label="RUC物语">
+    <header class="masthead">
+      <button id="player-badge" aria-haspopup="dialog" hidden><canvas width="64" height="64" aria-hidden="true"></canvas><strong></strong></button>
+      <div class="wordmark">
+        <svg class="brandmark" aria-hidden="true" viewBox="0 0 40 40" shape-rendering="crispEdges"><path fill="#eac87b" d="M4 4h32v3h3v27h-3v3H4v-3H1V7h3z"/><path fill="#253e34" d="M5 8h30v24H5z"/><path fill="#f4d48e" d="M8 16h5v-3h4V9h6v4h4v3h5v3H8zm1 13h3v-9h3v9h3v-9h4v9h3v-9h3v9h3v2H9z"/></svg>
+        <h1>RUC物语</h1><span class="brand-rule"></span><span class="brand-sub">校园漫游</span>
+      </div>
+      <div class="header-tools">
+        <span class="season" data-icon="sun">秋日晴</span><span class="tool-rule"></span>
+        <button class="icon-button" id="settings-open" aria-label="声音与画面设置" title="声音与画面设置" data-icon="settings"></button>
+        <button class="icon-button" id="full-open" aria-label="进入全屏" title="进入全屏" data-icon="expand"></button>
+      </div>
+    </header>
+    <section id="stage" class="stage" aria-label="可游览校园">
+      <canvas id="campus-view" aria-label="校园像素地图。方向键或 WASD 移动，E 互动。" tabindex="0"></canvas>
+      <div class="location-tag"><i class="location-dot"></i><div><span class="campus-name" id="campus-name">中关村校区</span><strong id="here">求是广场</strong></div></div>
+      <button class="mini" id="mini-open" aria-label="展开中关村与通州校区导览图">
+        <span class="mini-title"><span class="mini-heading" data-icon="compass">校园导览</span><span class="north">N ↑</span></span>
+        <span class="mini-regions"><span>中关村校区</span><span>通州校区</span></span>
+        <canvas id="mini-map" width="432" height="110" aria-hidden="true"></canvas>
+        <span class="mini-caption"><span><i class="player-dot"></i> 你的位置</span><span>展开 <kbd>M</kbd></span></span>
+      </button>
+      <div id="trip" hidden></div>
+      <div class="touch-pad" aria-label="触控方向键">
+        <button data-dir="up" aria-label="向上行走">▴</button><button data-dir="left" aria-label="向左行走">◂</button>
+        <button data-dir="down" aria-label="向下行走">▾</button><button data-dir="right" aria-label="向右行走">▸</button>
+      </div>
+      <button id="interact" class="interact" hidden></button>
+      <div id="toast" role="status" aria-live="polite" hidden></div>
+    </section>
+    <footer class="bottom-bar">
+      <nav aria-label="漫游工具">
+        <button id="exploration-open" class="tool-button" data-icon="compass" aria-haspopup="dialog" disabled><span>探索手册</span></button>
+        <button id="atlas-open" class="tool-button" data-icon="map"><span>地图</span><kbd>M</kbd></button>
+        <button id="journal-open" class="tool-button" data-icon="book"><span>漫游手册</span><span id="stamps" class="stamps"></span></button>
+        <button id="memory-open" class="tool-button" disabled><span>拾光栏</span><kbd>P</kbd></button>
+      </nav>
+      <div class="keyboard-guide"><span class="keycluster"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span><span>移动</span><kbd>E</kbd><span>互动</span></div>
+      <button id="help-open" class="tool-button help-button" data-icon="help"><span>操作指南</span></button>
+    </footer>
+    <dialog id="panel" aria-labelledby="panel-title">
+      <div class="paper">
+        <header class="panel-header"><span class="panel-emblem" id="panel-symbol"></span><div><span id="panel-subtitle" hidden></span><h2 id="panel-title"></h2></div><button id="panel-close" class="paper-icon" data-icon="close" aria-label="关闭窗口"></button></header>
+        <div id="panel-body"></div><p id="panel-error" role="alert" hidden></p>
+        <footer class="panel-foot"><button id="panel-back" class="back-button" data-icon="back">返回地点</button><span><kbd>Esc</kbd> 关闭窗口</span></footer>
+      </div>
+    </dialog>
+  <dialog id="registration" class="registration identity-dialog" aria-labelledby="registration-title">
+    <form id="registration-form" novalidate>
+      <h2 id="registration-title" class="sr-only">RUC物语 · 玩家登录</h2>
+      <div class="registration-fields">
+        <button type="button" class="avatar-button" id="choose-avatar" aria-label="选择玩家头像" aria-haspopup="dialog">
+          <canvas width="96" height="96" hidden></canvas><span class="sr-only">选择头像</span>
+        </button>
+        <div class="player-fields">
+          <fieldset><legend>角色形象</legend><div class="character-options" id="character-options"></div></fieldset>
+          <label for="nickname">昵称 <small>2～16 字</small></label>
+          <input id="nickname" name="nickname" autocomplete="off" enterkeyhint="next" required>
+          <label for="bio">个性签名 <small id="bio-count">0 / 50</small></label>
+          <textarea id="bio" name="bio" rows="2" aria-describedby="bio-count"></textarea>
+        </div>
+      </div>
+      <p class="form-feedback" id="registration-error" role="alert"></p>
+      <button type="submit" class="campus-enter">进入校园</button>
+    </form>
+  </dialog>
+  <dialog id="avatar-picker" class="identity-dialog paper-card" aria-labelledby="avatar-title">
+    <div class="card-heading"><h2 id="avatar-title">选择头像</h2><button type="button" class="card-close" aria-label="关闭头像选择">×</button></div>
+    <div id="avatar-options"></div>
+    <p class="form-feedback" id="avatar-error" role="alert"></p>
+  </dialog>
+  <dialog id="profile-card" class="identity-dialog paper-card" aria-labelledby="profile-title">
+    <div class="card-heading"><h2 id="profile-title">玩家名片</h2><button type="button" class="card-close" aria-label="关闭玩家名片">×</button></div>
+    <div id="card-summary">
+      <div class="card-identity"><canvas id="card-avatar" width="96" height="96" aria-label="玩家头像"></canvas>
+        <div><h3 id="card-name"></h3><p id="card-bio"></p></div></div>
+      <div class="card-character">
+        <canvas id="card-character" width="96" height="96" aria-label="当前地图角色"></canvas>
+        <div class="map-role"><label for="card-character-choice">地图角色</label><select id="card-character-choice"></select></div>
+      </div>
+      <p class="form-feedback" id="character-error" role="alert"></p>
+      <p class="card-id">本地玩家 ID <code id="card-id"></code></p>
+      <div class="card-actions"><button type="button" id="change-avatar" aria-haspopup="dialog">更换头像</button><button type="button" id="edit-profile">编辑资料</button></div>
+    </div>
+    <form id="card-editor" hidden novalidate>
+      <div class="player-fields">
+        <label for="edit-nickname">昵称 <small id="edit-name-limit">2～16 字</small></label>
+        <input id="edit-nickname" name="nickname" autocomplete="off" aria-describedby="edit-name-limit" required>
+        <label for="edit-bio">个性签名 <small id="edit-bio-count">0 / 50</small></label>
+        <textarea id="edit-bio" name="bio" rows="2" aria-describedby="edit-bio-count"></textarea>
+      </div>
+      <p class="form-feedback" id="edit-error" role="alert"></p>
+      <div class="card-actions"><button type="button" id="cancel-edit">取消</button><button type="submit">保存修改</button></div>
+    </form>
+  </dialog>
+  </main>
+  <script src="./vendor/phaser-arcade-physics.min.js"></script>
+  <script type="module" src="./game/app.js"></script>
+</body>
+</html>

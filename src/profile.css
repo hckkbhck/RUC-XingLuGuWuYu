@@ -1,0 +1,83 @@
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+.place { display:grid; grid-template-columns:auto 1fr; align-items:center; column-gap:9px; }
+.place h1,.place .location { grid-column:2; }
+.place:has(#player-badge:not([hidden])) h1 { display:none; }
+.place:has(#player-badge:not([hidden])) .location { grid-area:2/1; margin:4px 0 0 3px; }
+.hud #player-badge { display:flex; align-items:center; gap:8px; padding:0; min-height:32px; border:0; background:transparent; box-shadow:none; text-align:left; }
+#player-badge canvas { width:34px; height:34px; border:2px solid #ddbd78; image-rendering:pixelated; }
+#player-badge strong { max-width:min(36vw,17em); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.masthead #player-badge { display:flex; align-items:center; gap:8px; padding:3px 7px; min-width:0; background:transparent; color:#fff3d2; border:1px solid #ab965f; border-radius:4px; }
+.masthead:has(#player-badge:not([hidden])) .wordmark { margin-right:auto; margin-left:16px; }
+@media(max-width:700px) { .masthead:has(#player-badge:not([hidden])) .wordmark { display:none; } }
+.identity-dialog { margin:auto; color-scheme:light; color:#432b18; font-family:"Microsoft YaHei","PingFang SC",sans-serif; }
+.identity-dialog::backdrop { background:#1d281eb5; }
+.identity-dialog button,.identity-dialog input,.identity-dialog textarea { font:inherit; }
+.identity-dialog :focus-visible { outline:3px solid #235b54; outline-offset:2px; }
+.registration {
+  width:min(930px,96vw); max-width:none; max-height:96dvh; border-radius:3px; padding:0;
+  border-style:solid; border-color:transparent;
+  border-width:clamp(72px,13vw,136px) clamp(38px,13vw,139px) clamp(38px,8vw,92px);
+  border-image-source:var(--registration-art); border-image-slice:228 240 179 240;
+  background:#ffdfa9; box-shadow:0 14px 60px #131d16a0; overflow:auto;
+}
+.registration form { padding:8px clamp(0px,1.4vw,16px) 4px; }
+.registration-fields { display:grid; grid-template-columns:minmax(0,.78fr) minmax(0,1.32fr); gap:clamp(14px,2.4vw,28px); align-items:center; }
+.avatar-button {
+  width:100%; aspect-ratio:363/466; position:relative; border:0; padding:0;
+  background:var(--registration-art) 22.34% 43.19% / 423.14% 219.74% no-repeat;
+}
+.avatar-button canvas { position:absolute; left:20.7%; top:20.4%; width:58.1%; height:43.8%; image-rendering:pixelated; }
+.player-fields { display:grid; gap:6px; min-width:0; }
+.player-fields fieldset { border:0; margin:0 0 5px; padding:0; min-width:0; }
+.player-fields legend,.player-fields label,.card-heading h2 { font-family:"STSong","SimSun",serif; font-weight:800; }
+.player-fields legend,.player-fields label { font-size:19px; }
+.player-fields label { display:flex; align-items:baseline; justify-content:space-between; gap:6px; }
+.player-fields small { color:#6c5336; font:12px/1.2 system-ui,sans-serif; }
+.character-options { display:flex; gap:7px; margin-top:5px; }
+.character-options button,#avatar-options button { display:grid; align-items:center; justify-items:center; gap:3px; border:2px solid #946238; color:#51371e; background:#ffebbe; border-radius:3px; }
+.character-options button { flex:1; min-height:58px; padding:3px; grid-template-columns:44px 1fr; font-size:13px; }
+.character-options canvas { width:44px; height:48px; object-fit:contain; image-rendering:pixelated; }
+.character-options [aria-pressed="true"],#avatar-options [aria-pressed="true"] { background:#d5dfac; border-color:#375838; box-shadow:inset 0 0 0 2px #698554; }
+.player-fields input,.player-fields textarea { width:100%; min-width:0; padding:8px 10px; color:#412c1c; caret-color:#405a37; border:3px double #976c3f; background:#ffefce; border-radius:3px; font-size:16px; }
+.player-fields textarea { resize:vertical; min-height:57px; max-height:130px; }
+.form-feedback { color:#922e1c; margin:7px 0 2px; text-align:center; font-size:13px; }
+.form-feedback:empty { margin:0; }
+.campus-enter { display:block; min-height:44px; width:min(240px,90%); margin:13px auto 1px; border:4px double #efd790; outline:2px solid #5b4b23; background:#496334; color:#fff3ce; font:800 24px/1.3 "STSong","SimSun",serif !important; letter-spacing:.12em; }
+.paper-card { width:min(380px,calc(100vw - 24px)); padding:20px; background:#ffe6b7; border:5px ridge #ac7841; border-radius:3px; }
+.card-heading { display:flex; align-items:center; justify-content:space-between; margin:0 0 16px; }
+.card-heading h2 { margin:0; font-size:24px; }
+.card-close { min-width:40px; min-height:40px; background:#f4cf94; color:#4f341c; border:1px solid #966d3e; font-size:22px !important; }
+#avatar-options { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+#avatar-options button { padding:8px 4px; font-size:13px; }
+#avatar-options canvas,.card-identity canvas { width:62px; height:62px; image-rendering:pixelated; }
+.card-identity { display:flex; align-items:flex-start; gap:13px; overflow-wrap:anywhere; }
+.card-identity h3 { margin:3px 0 5px; }
+.card-identity p { margin:0; font-size:14px; white-space:pre-wrap; }
+.card-character { display:flex; align-items:center; gap:9px; margin:15px 0; border-block:1px solid #c39760; color:#654525; }
+.card-character canvas { width:70px; height:70px; image-rendering:pixelated; }
+.card-character .map-role { display:grid; gap:3px; margin:6px 0; font-size:14px; }
+.card-character select { min-height:40px; padding:4px 10px; font:inherit; font-size:15px; color:#4f341c; background:#ffefce; border:1px solid #966d3e; border-radius:3px; }
+.card-id { margin:0; color:#684b2f; font-size:12px; }
+.card-id code { display:block; margin-top:4px; overflow-wrap:anywhere; }
+.card-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:16px; }
+.card-actions button { min-height:44px; padding:6px 14px; border:1px solid #966d3e; border-radius:3px; background:#f4cf94; color:#4f341c; }
+.card-actions button[type="submit"] { background:#496334; border-color:#375438; color:#fff4d7; }
+@media(max-width:700px) {
+  .registration { border-width:82px 25px 42px; width:min(540px,97vw); }
+  .registration form { padding:3px 2px; }
+  .registration-fields { gap:10px; grid-template-columns:minmax(76px,.62fr) minmax(0,1.38fr); }
+  .character-options button { grid-template-columns:1fr; gap:0; font-size:12px; }
+  .character-options canvas { width:37px; height:40px; }
+  .player-fields legend,.player-fields label { font-size:16px; }
+  .player-fields small { font-size:10px; }
+  .campus-enter { font-size:20px !important; }
+}
+@media(max-height:560px) {
+  .registration { border-width:54px 28px 20px; width:min(690px,97vw); }
+  .registration-fields { grid-template-columns:minmax(82px,.45fr) minmax(0,1.55fr); }
+  .avatar-button { max-width:135px; justify-self:center; }
+  .character-options button { grid-template-columns:36px 1fr; min-height:44px; }
+  .character-options canvas { width:32px; height:36px; }
+  .player-fields { gap:3px; }
+  .player-fields textarea { min-height:40px; }
+}

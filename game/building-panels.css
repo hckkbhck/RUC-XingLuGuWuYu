@@ -1,0 +1,171 @@
+/* The sliced borders keep their four-pixel steps at every panel size. */
+:root {
+  --place-font: 'Campus Panel Pixel', 'Microsoft YaHei', sans-serif;
+  --place-frame: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2732%27%20height%3D%2732%27%20viewBox%3D%270%200%2032%2032%27%20shape-rendering%3D%27crispEdges%27%3E%3Cpolygon%20fill%3D%27%23472f21%27%20points%3D%276%2C0%2026%2C0%2026%2C2%2030%2C2%2030%2C6%2032%2C6%2032%2C26%2030%2C26%2030%2C30%2026%2C30%2026%2C32%206%2C32%206%2C30%202%2C30%202%2C26%200%2C26%200%2C6%202%2C6%202%2C2%206%2C2%27%2F%3E%3Cpolygon%20fill%3D%27%23ac6f39%27%20points%3D%277%2C2%2025%2C2%2025%2C4%2028%2C4%2028%2C7%2030%2C7%2030%2C25%2028%2C25%2028%2C28%2025%2C28%2025%2C30%207%2C30%207%2C28%204%2C28%204%2C25%202%2C25%202%2C7%204%2C7%204%2C4%207%2C4%27%2F%3E%3Cpolygon%20fill%3D%27%23f4cd86%27%20points%3D%277%2C3%2025%2C3%2025%2C5%2027%2C5%2027%2C7%2029%2C7%2029%2C25%2027%2C25%2027%2C27%2025%2C27%2025%2C29%207%2C29%207%2C27%205%2C27%205%2C25%203%2C25%203%2C7%205%2C7%205%2C5%207%2C5%27%2F%3E%3Cpolygon%20fill%3D%27%23cd9658%27%20points%3D%278%2C5%2024%2C5%2024%2C7%2025%2C7%2025%2C8%2027%2C8%2027%2C24%2025%2C24%2025%2C25%2024%2C25%2024%2C27%208%2C27%208%2C25%207%2C25%207%2C24%205%2C24%205%2C8%207%2C8%207%2C7%208%2C7%27%2F%3E%3Cpolygon%20fill%3D%27%23fff1c9%27%20points%3D%278%2C6%2024%2C6%2024%2C8%2024%2C8%2024%2C8%2026%2C8%2026%2C24%2024%2C24%2024%2C24%2024%2C24%2024%2C26%208%2C26%208%2C24%208%2C24%208%2C24%206%2C24%206%2C8%208%2C8%208%2C8%208%2C8%27%2F%3E%3Cpolygon%20fill%3D%27%23fff0cc%27%20points%3D%279%2C7%2023%2C7%2023%2C9%2023%2C9%2023%2C9%2025%2C9%2025%2C23%2023%2C23%2023%2C23%2023%2C23%2023%2C25%209%2C25%209%2C23%209%2C23%209%2C23%207%2C23%207%2C9%209%2C9%209%2C9%209%2C9%27%2F%3E%3C%2Fsvg%3E");
+  --place-key: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2732%27%20height%3D%2732%27%20viewBox%3D%270%200%2032%2032%27%20shape-rendering%3D%27crispEdges%27%3E%3Cpolygon%20fill%3D%27%23553825%27%20points%3D%274%2C0%2028%2C0%2028%2C2%2030%2C2%2030%2C4%2032%2C4%2032%2C28%2030%2C28%2030%2C30%2028%2C30%2028%2C32%204%2C32%204%2C30%202%2C30%202%2C28%200%2C28%200%2C4%202%2C4%202%2C2%204%2C2%27%2F%3E%3Cpolygon%20fill%3D%27%23966335%27%20points%3D%275%2C1%2027%2C1%2027%2C3%2029%2C3%2029%2C5%2031%2C5%2031%2C27%2029%2C27%2029%2C29%2027%2C29%2027%2C31%205%2C31%205%2C29%203%2C29%203%2C27%201%2C27%201%2C5%203%2C5%203%2C3%205%2C3%27%2F%3E%3Cpolygon%20fill%3D%27%23e1a45b%27%20points%3D%275%2C2%2027%2C2%2027%2C4%2028%2C4%2028%2C5%2030%2C5%2030%2C27%2028%2C27%2028%2C28%2027%2C28%2027%2C30%205%2C30%205%2C28%204%2C28%204%2C27%202%2C27%202%2C5%204%2C5%204%2C4%205%2C4%27%2F%3E%3Cpolygon%20fill%3D%27%23ffe4a5%27%20points%3D%276%2C3%2026%2C3%2026%2C5%2027%2C5%2027%2C6%2029%2C6%2029%2C26%2027%2C26%2027%2C27%2026%2C27%2026%2C29%206%2C29%206%2C27%205%2C27%205%2C26%203%2C26%203%2C6%205%2C6%205%2C5%206%2C5%27%2F%3E%3Cpolygon%20fill%3D%27%23fff2d3%27%20points%3D%276%2C4%2026%2C4%2026%2C6%2026%2C6%2026%2C6%2028%2C6%2028%2C26%2026%2C26%2026%2C26%2026%2C26%2026%2C28%206%2C28%206%2C26%206%2C26%206%2C26%204%2C26%204%2C6%206%2C6%206%2C6%206%2C6%27%2F%3E%3C%2Fsvg%3E");
+}
+#panel.place-panel {
+  --place-ink: #332d21;
+  --place-accent: #395546;
+  --place-muted: #66543c;
+  width: min(626px, calc(100vw - 24px));
+  max-height: min(92dvh, 910px);
+  border: 0; border-radius: 0; padding: 0;
+  color: var(--place-ink); background: transparent;
+  box-shadow: none; filter: drop-shadow(0 5px 0 #33251580);
+  scrollbar-color: #966c40 #eed5a3;
+}
+#panel.place-panel[data-place-theme="water"], #panel.place-panel[data-place-theme="bus"] { --place-accent: #345b60; }
+#panel.place-panel[data-place-theme="sport"], #panel.place-panel[data-place-theme="art"] { --place-accent: #844936; }
+#panel.place-panel[data-place-theme="garden"] { --place-accent: #495b33; }
+#panel.place-panel[data-place-theme="home"], #panel.place-panel[data-place-theme="food"] { --place-accent: #735234; }
+#panel.place-panel.memory-panel, #panel.place-panel.task-panel { width: min(760px, calc(100vw - 24px)); }
+#panel.place-panel::backdrop { background: rgb(27 36 27 / 57%); }
+#panel.place-panel > .paper {
+  padding: 5px 10px 2px;
+  border: 13px solid transparent; border-image: var(--place-frame) 10 fill / 17px stretch;
+  background: transparent; display: flow-root;
+}
+#panel.place-panel .panel-header {
+  display: grid; grid-template-columns: 48px minmax(0,1fr) 44px; align-items: center;
+  gap: 14px; margin: 0; padding: 10px 12px; color: #fff1c9; background: var(--place-accent);
+  border: 2px solid #483b28; border-radius: 0;
+  box-shadow: inset 0 2px #ffffff38, inset 0 -2px #17241e66;
+}
+#panel.place-panel .panel-header > div {
+  min-width: 0;
+}
+#panel.place-panel #panel-symbol {
+  width: 48px; height: 45px; display: grid; place-items: center; border-radius: 0;
+  background: #f1d391; border: 2px solid #473a29;
+  box-shadow: inset 2px 2px #fff0bf, inset -2px -2px #bb9558;
+}
+#panel.place-panel #panel-symbol :is(canvas,img) { width: 32px; height: 32px; object-fit: contain; image-rendering: pixelated; }
+#panel.place-panel .panel-header h2, #panel.canteen-panel .recipe-heading h2 {
+  font-family: var(--place-font); font-weight: 400; letter-spacing: 0;
+}
+#panel.place-panel .panel-header h2 {
+  font-size: 30px; line-height: 1.23; color: #fff4cf; text-shadow: 0 2px #252c24; overflow-wrap: anywhere;
+}
+#panel.place-panel #panel-subtitle { display: block; margin-bottom: 3px; color: #ffebba; font: 600 13px/1.35 var(--sans); }
+#panel.place-panel #panel-close {
+  width: 44px; height: 44px; padding: 10px; margin: 0; color: #fff2c4;
+  border: 2px solid #54331f; border-radius: 0; background: #a55131;
+  box-shadow: inset 2px 2px #e8995b, inset -2px -3px #733923;
+}
+#panel.place-panel #panel-close:hover { background: #b55e35; }
+#panel.place-panel #panel-close svg { width: 20px; height: 20px; stroke-width: 3; shape-rendering: crispEdges; }
+#panel.place-panel #panel-body { padding: 16px 5px 12px; min-height: 0; }
+#panel.place-panel .place-intro {
+  display: grid; grid-template-columns: minmax(0,.94fr) minmax(0,1.2fr);
+  align-items: center; gap: 20px; padding: 0 0 14px; margin: 0 0 13px;
+  border-bottom: 3px dotted #b99461;
+}
+#panel.place-panel .place-intro:not(:has(.place-print)) { grid-template-columns: 1fr; }
+#panel.place-panel .place-print {
+  width: 100%; height: auto; aspect-ratio: 180/105; order: 0; transform: none; border-radius: 0;
+  border: 4px solid #fff8dc; outline: 2px solid #9c7344; outline-offset: -1px;
+  box-shadow: 0 3px #b09565; image-rendering: pixelated;
+}
+#panel.place-panel .intro, #panel.place-panel .result-detail { font: 16px/1.65 var(--sans); color: var(--place-ink); }
+#panel.place-panel .place-intro .intro { margin: 0; text-wrap: pretty; }
+#panel.place-panel .choice-list, #panel.place-panel .option-list { gap: 8px; }
+#panel.place-panel .choice-list:has(+ .option-list:not(:empty)) { margin-bottom: 12px; }
+#panel.place-panel :is(.option-list,.choice-list):empty { display: none; }
+#panel.place-panel .option-row, #panel.place-panel .choice, #panel.place-panel .secondary,
+#panel.place-panel .music-key, #panel.place-panel .back-button, #panel.place-panel .garden-choice,
+#panel.place-panel .album-upload, #panel.place-panel .task-link, #panel.place-panel .task-tab,
+#panel.canteen-panel .recipe-home-option {
+  border: 5px solid transparent; border-radius: 0; border-image: var(--place-key) 7 / 8px stretch;
+  color: #483721; background: #f8dfaa; background-clip: padding-box; box-shadow: none;
+  font-family: var(--place-font); font-weight: 400; letter-spacing: 0;
+}
+#panel.place-panel :is(.option-row,.choice,.secondary,.primary,.music-key,.back-button,.task-link,.task-button,.garden-choice) {
+  min-height: 44px; max-width: 100%;
+}
+#panel.place-panel :is(.option-row,.choice) {
+  display: flex; align-items: center; gap: 10px; padding: 8px 12px; font-size: 18px; line-height: 1.4;
+  overflow-wrap: anywhere; text-align: left;
+}
+#panel.place-panel .choice:has(.swatches) { flex-wrap: wrap; }
+#panel.place-panel .swatches i { border: 1px solid #765d3b; }
+#panel.place-panel .option-row svg, #panel.place-panel .choice svg { color: var(--place-accent); }
+#panel.place-panel :is(button,a) svg, #panel.canteen-panel .recipe-home-option svg {
+  shape-rendering: crispEdges; stroke-linecap: square; stroke-linejoin: miter;
+}
+#panel.place-panel .primary, #panel.place-panel .task-button {
+  font: 400 18px/1.4 var(--place-font); padding: 7px 15px; border: 2px solid #39402c; border-radius: 0;
+  color: #ffefc1; background: var(--place-accent);
+  box-shadow: inset 2px 2px #ffffff35, inset -2px -2px #172b2480;
+}
+#panel.place-panel :is(.option-row,.choice,.music-key,.secondary,.garden-choice,.back-button,.task-link,.task-tab,.album-upload):hover:not(:disabled),
+#panel.canteen-panel .recipe-home-option:hover { background-color: #ffeac0; }
+#panel.place-panel .primary:hover:not(:disabled), #panel.place-panel .task-button:hover:not(:disabled) { filter: brightness(1.12); }
+#panel.place-panel .option-note { margin-inline-start: auto; font: 13px/1.4 var(--sans); }
+#panel.place-panel :is(button,a.school-service):active:not(:disabled), #panel.canteen-panel .recipe-home-option:active { translate: 0 2px; }
+#panel.place-panel :is(button,a,[tabindex],input,textarea,select):focus-visible,
+#panel.canteen-panel .school-service:focus-visible { outline: 3px solid #205e70; outline-offset: 1px; }
+#panel.place-panel .panel-foot { margin: 0 5px; padding: 7px 0 1px; background: transparent; border-top: 2px dotted #b39462; }
+#panel.place-panel .panel-foot > span { color: #685638; }
+#panel.place-panel .panel-foot kbd, #game-shell:not([data-near=""]) #interact kbd {
+  background: #ffedb8; border: 2px solid #97723f; border-radius: 0; box-shadow: 0 2px #765731;
+}
+#panel.place-panel .back-button { padding: 3px 11px; gap: 6px; font-size: 16px; }
+#panel.place-panel :is(.data-note,.record-time,.last-record,.muted,.option-note) { color: var(--place-muted); }
+#panel.place-panel .data-row { border-bottom: 2px dotted #c39e6d; gap: 10px; font-size: 15px; }
+#panel.place-panel .result-stamp { color: var(--place-accent); font-weight: bold; }
+#panel.place-panel .clock-face, #panel.place-panel .melody { color: var(--place-accent); font-family: var(--place-font); }
+#panel.place-panel .clock-face { font-size: 32px; }
+#panel.place-panel :is(.activity-demo,.photo-stage,.photo-preview,.album-print,.task-card) {
+  border-radius: 0; border: 2px solid #9e7b50;
+}
+#panel.place-panel .photo-stage { background: #f1dfb7; }
+#panel.place-panel :is(input:not([type=file]),textarea,select) {
+  border: 2px solid #9d784e; border-radius: 0; background-color: #fff7dc; color: #3b3527;
+}
+#panel.place-panel #panel-error { background: #f6d6ab; border: 2px solid #aa7045; border-radius: 0; }
+#panel.place-panel .garden-summary { color: #43532c; }
+#panel.place-panel .garden-grid { background: #ead1a2; gap: 3px; padding: 6px; border: 2px solid #947747; }
+#panel.place-panel .garden-cell { border: 1px solid #7e8050; border-radius: 0; background: #b2bd83; box-shadow: inset 1px 1px #d1d99d; }
+#panel.place-panel .garden-cell[aria-pressed=true] { border: 3px solid #384f37; background: #e6d992; }
+#panel.place-panel .garden-choice { padding: 2px; }
+#panel.place-panel .garden-choice img { width: 32px; }
+#panel.place-panel :is(.garden-choice,.task-tab)[aria-pressed=true] { background: #526643; color: #fff6d2; }
+#panel.place-panel :is(.album-print,.album-card) { background: #fff5d3; transform: none; }
+#panel.place-panel .album-upload { border-style: solid; }
+#panel.place-panel .task-paper, #panel.place-panel .task-card { border-radius: 0; }
+#panel.place-panel .task-card { text-align: left; }
+#panel.place-panel .task-card strong { font-family: var(--place-font); font-weight: 400; }
+#panel.place-panel button:disabled { opacity: .6; cursor: default; }
+#game-shell:not([data-near=""]) #interact {
+  border: 2px solid #463d2a; border-radius: 0; background: #354f3d; color: #fff2c7;
+  box-shadow: inset 2px 2px #789072, inset -2px -2px #253d30, 0 3px #302f2080;
+  font: 400 16px/1.3 var(--place-font);
+}
+#panel.canteen-panel .recipe-home-option { padding: .55em .75em; }
+#panel.canteen-panel .recipe-form :is(button,input), .dish-photo-viewer, .dish-photo-viewer button { border-radius: 0; }
+#panel.canteen-panel .recipe-form button, .dish-photo-viewer button { font-family: var(--place-font); font-weight: 400; }
+#panel.canteen-panel :is(.recipe-upload,.recipe-remove), .dish-photo-viewer button {
+  border: 2px solid #82673c; background: #ffe4ac; color: #413b23;
+  box-shadow: inset 2px 2px #fff3cf, inset -2px -2px #d5af75;
+  border-radius: 0; padding: 4px 10px; min-height: 40px;
+  font-family: var(--place-font); font-weight: 400;
+}
+@media (max-width: 600px) {
+  #panel.place-panel { width: calc(100vw - 16px); max-height: 94dvh; }
+  #panel.place-panel > .paper { padding: 2px 1px 1px; border-width: 11px; border-image-width: 14px; }
+  #panel.place-panel .panel-header { grid-template-columns: 36px minmax(0,1fr) 44px; gap: 9px; padding: 5px 6px; }
+  #panel.place-panel #panel-symbol { width: 36px; height: 36px; }
+  #panel.place-panel #panel-symbol :is(canvas,img) { width: 28px; height: 28px; }
+  #panel.place-panel .panel-header h2 { font-size: 24px; }
+  #panel.place-panel #panel-body { padding: 12px 3px 8px; }
+  #panel.place-panel .place-intro { grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); gap: 11px; padding-bottom: 10px; margin-bottom: 10px; }
+  #panel.place-panel .intro, #panel.place-panel .result-detail { font-size: 15px; line-height: 1.55; }
+  #panel.place-panel :is(.option-row,.choice) { padding: 6px 8px; font-size: 16px; }
+  #panel.place-panel .garden-varieties { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  #panel.place-panel .garden-grid { gap: 2px; padding: 3px; }
+}
+@media (max-width: 350px) {
+  #panel.place-panel .place-intro { grid-template-columns: 1fr; }
+  #panel.place-panel .place-print { width: min(100%,180px); }
+}

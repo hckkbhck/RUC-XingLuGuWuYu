@@ -1,6 +1,31 @@
 // Coordinates use world pixels. The handwritten reference is topological, with exaggerated depth.
+import {createFountainConfig, fountainCollisions} from './fountain.js';
+
 export const size = { width: 1600, height: 940 };
-export const spawn = { x: 1528, y: 501, facing: 'left', status: '待确认' };
+export const qiushiPlaza = {
+  name: '求是广场', rect: [995, 393, 147, 89], surroundings: [938, 388, 212, 122],
+};
+const [plazaX, plazaY, plazaW, plazaH] = qiushiPlaza.rect;
+export const fountain = createFountainConfig(plazaX + plazaW / 2, plazaY + plazaH / 2);
+export const spawn = {x: fountain.x + 50, y: plazaY + plazaH - 12, facing: 'down'};
+
+const pondX = 496;
+const pondY = 343;
+const crossingX = pondX + 56;
+const crossingWidth = 16;
+export const yishaoPond = {
+  rect: [pondX, pondY, 128, 88],
+  crossings: [[crossingX, 333, crossingWidth, 47], [crossingX, 424, crossingWidth, 51]],
+  ripples: [[36, 61, 0], [87, 67, 560], [82, 52, 1160], [104, 68, 1420]],
+  mist: [90, 65],
+};
+
+// Keep the same central opening through the curved bank and water.
+const pondBanks = [[34, 46, 18, 111], [46, 73, 7, 122], [73, 82, 16, 113], [82, 85, 38, 98]]
+  .flatMap(([top, bottom, left, right], index) => [
+    { id: 'pond-west-' + index, rect: [pondX + left, pondY + top, 56 - left, bottom - top] },
+    { id: 'pond-east-' + index, rect: [crossingX + crossingWidth, pondY + top, right - 72, bottom - top] },
+  ]);
 
 export const roads = [
   { width: 56, type: 'street', points: [[45, 0], [45, 540]] },
@@ -35,12 +60,12 @@ export function roadRect({ x, y, dx, dy, width }) {
 }
 
 export const surfaces = [
-  { type: 'plaza', rect: [995, 393, 147, 89] },
+  { type: 'plaza', rect: qiushiPlaza.rect },
   { type: 'plaza', rect: [971, 317, 163, 65] },
   { type: 'plaza', rect: [1478, 464, 76, 62] },
   { type: 'garden', rect: [312, 350, 136, 104] },
   { type: 'garden', rect: [497, 347, 127, 103] },
-  { type: 'pond', rect: [517, 365, 76, 66] },
+  { type: 'pond', rect: yishaoPond.rect },
   { type: 'garden', rect: [991, 562, 109, 100] },
   { type: 'garden', rect: [1417, 550, 129, 115] },
   { type: 'garden', rect: [758, 100, 140, 80] },
@@ -115,6 +140,7 @@ const libraryDoorY = libraryRect[1] + libraryRect[3] + 17;
 export const pavedAreas = [
   ...roadSegments.map(roadRect),
   ...surfaces.filter(({ type }) => type === 'plaza').map(({ rect }) => rect),
+  ...yishaoPond.crossings,
 ];
 
 function touches([x, y, w, h], [left, top, width, height], gap = 0) {
@@ -158,7 +184,7 @@ export const roadsideProps = placeRoadsideProps();
 
 export const interactions = [
   { id: 'gate', name: '东门 · 迎新点', x: 1517, y: 493, radius: 35, status: '待确认' },
-  { id: 'board', name: '广场 · 公告栏', x: 973, y: 451, radius: 27, status: '演示布置' },
+  { id: 'board', name: qiushiPlaza.name + ' · 公告栏', x: 973, y: 451, radius: 27, status: '演示布置' },
   { id: 'library', name: '图书馆 · 正门', x: libraryDoorX, y: libraryDoorY, radius: 24, status: '待确认' },
 ];
 
@@ -167,7 +193,8 @@ export const collisions = [
     const [x, y, w, h] = rect;
     return { id, rect: id === 'library' ? [x + 3, y + 5, w - 6, h - 6] : [x + 3, y + 4, w - 6, h - 5] };
   }),
-  { id: 'pond', rect: [526, 377, 56, 42] },
+  ...pondBanks,
+  ...fountainCollisions(fountain),
   { id: 'board', rect: [board.x - 14, board.y - 6, 28, 9] },
   ...roadsideProps.map(({ type, rect: [x, y, w, h] }, index) => ({
     id: 'roadside-' + index,
@@ -175,9 +202,20 @@ export const collisions = [
   })),
 ];
 
-export const route = [[spawn.x, spawn.y], [spawn.x, 495], [1028, 495], [1028, 451],
+const welcomeGate = interactions.find(z => z.id === 'gate');
+export const route = [[spawn.x, spawn.y], [spawn.x, 495], [welcomeGate.x, 495], [1028, 495], [1028, 451],
   [board.x, 451], [libraryDoorX, 451], [libraryDoorX, libraryDoorY]];
 export const mapLabels = [
   ['苏州街', 45, 184], ['中关村大街', 1520, 132], ['静园楼群', 596, 263],
-  ['田径场', 619, 635], ['篮球场', 421, 565], ['教二草坪', 1047, 622], ['东门广场', 1056, 466],
+  ['田径场', 619, 635], ['篮球场', 421, 565], ['教二草坪', 1047, 622], [qiushiPlaza.name, fountain.x, plazaY + plazaH - 3],
 ];
+
+export function locationAt(x, y) {
+  const [left, top, w, h] = qiushiPlaza.surroundings;
+  if (x > left && x < left + w && y > top && y < top + h) return qiushiPlaza.name;
+  if (x > 1420) return '东门';
+  if (Math.hypot(x - libraryDoorX, y - libraryDoorY) < 60) return '图书馆';
+  if (y > 700) return '南侧教学区';
+  if (x > 1150 && y > 525) return '东侧草坪';
+  return '校园';
+}

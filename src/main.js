@@ -1,5 +1,8 @@
-import { board, buildings, collisions, gates, interactions, roadsideProps, route, size, spawn, surfaces } from './campus.js';
-import { paintBoard, paintBuilding, paintGround, paintMap, paintPlayer, paintRoadsideProp, playerArt } from './art.js';
+import { board, buildings, collisions, fountain, gates, interactions, locationAt, roadsideProps, route, size, spawn, yishaoPond } from './campus.js';
+import { paintBoard, paintBuilding, paintGround, paintMap, paintRoadsideProp, playerArt } from './art.js';
+import {addFountain, loadFountain} from './fountain.js';
+import {asset, characters, loadCharacters, poseKey, prepareCharacters} from './characters.js';
+import {setupIdentity} from './profile-ui.js';
 
 const Phaser = globalThis.Phaser;
 const byId = id => document.getElementById(id);
@@ -17,13 +20,12 @@ const speed = 199;
 // Hold each walk pose for about 200 ms at the standard movement speed.
 const strideFrameDistance = 40;
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-const [pondX, pondY] = surfaces.find(surface => surface.type === 'pond').rect;
-const library = interactions.find(zone => zone.id === 'library');
+const pondImageUrl = 'assets/landmarks/yishao-pond.png';
 const driftingLeaves = [[468, 360, 0], [609, 402, 900], [834, 190, 450],
   [1490, 599, 1500], [1057, 621, 2100], [400, 417, 2800]];
 
 const objectives = [
-  '在东门和迎新志愿者交谈。',
+  '从求是广场沿主路向东，到东门和迎新志愿者交谈。',
   '沿主路向西，到广场查看公告栏。',
   '向北去图书馆，领取迎新海报。',
   '海报已经贴到广场公告栏。你可以继续探索校园。',
@@ -36,7 +38,7 @@ const conversations = {
     after: '广场在东门西边。需要指路的话，按 M 打开校园全图。',
   },
   board: {
-    title: '广场 · 公告栏',
+    title: '求是广场 · 公告栏',
     text: '“新海报在图书馆正门的服务台。” 广场北边就是图书馆，去把海报领回来吧。',
     action: '记下留言',
     early: '公告栏上留着一块空位。东门的迎新志愿者知道今天的安排。',
@@ -63,12 +65,20 @@ class Campus extends Phaser.Scene {
     super('campus');
   }
 
+  preload() {
+    this.load.image('yishao-pond', asset(pondImageUrl));
+    loadFountain(this, asset);
+    loadCharacters(this);
+  }
+
   create() {
     this.step = 0;
     this.openDialog = null;
     this.nearby = null;
     this.touch = new Set();
     this.facing = spawn.facing;
+    this.character = characters[0];
+    this.identityLocked = false;
     this.mapTick = 0;
     this.noticeTimer = null;
     this.walkDistance = 0;
@@ -77,6 +87,11 @@ class Campus extends Phaser.Scene {
 
     texture(this, 'ground', size.width, size.height, paintGround);
     this.add.image(0, 0, 'ground').setOrigin(0).setDepth(-100);
+    const [pondX, pondY, pondWidth, pondHeight] = yishaoPond.rect;
+    this.add.image(pondX, pondY, 'yishao-pond').setOrigin(0)
+      .setDisplaySize(pondWidth, pondHeight).setDepth(-98);
+    this.pondEffects = this.add.graphics().setDepth(-97);
+    addFountain(this, fountain);
     for (const { id, name, style, rect: [x, y, width, height], label } of buildings) {
       texture(this, id, width + 10, height + 13, ctx => paintBuilding(ctx, style, width, height));
       this.add.image(x, y, id).setOrigin(0).setDepth(y + height - 3);
@@ -101,12 +116,8 @@ class Campus extends Phaser.Scene {
       this.physics.add.existing(zone, true);
       footprintGroup.add(zone);
     }
-    for (const facing of ['up', 'down', 'left', 'right']) {
-      for (let step = 0; step <= playerArt.walkFrames; step++) {
-        texture(this, facing + step, playerArt.width, playerArt.height, ctx => paintPlayer(ctx, facing, step));
-      }
-    }
-    this.player = this.physics.add.sprite(spawn.x, spawn.y, spawn.facing + '0')
+    prepareCharacters(this);
+    this.player = this.physics.add.sprite(spawn.x, spawn.y, poseKey(this.character.id, spawn.facing, 0))
       .setOrigin(.5, playerArt.footY / playerArt.height);
     this.player.setCollideWorldBounds(true);
     this.player.body.setSize(12, 8).setOffset((playerArt.width - 12) / 2, playerArt.footY - 5);
@@ -126,11 +137,31 @@ class Campus extends Phaser.Scene {
     this.cameras.main.startFollow(this.player, true, .22, .22);
     this.resizeCamera(this.scale.gameSize);
     this.scale.on('resize', this.resizeCamera, this);
-    this.keys = this.input.keyboard.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT');
+    this.keys = this.input.keyboard.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT', false);
     this.setStep(0);
     this.renderMaps();
     bindUI(this);
+    setupIdentity({
+      getImage: key => this.textures.get(key).getSourceImage(),
+      useCharacter: id => this.useCharacter(id),
+      lockIdentity: locked => this.lockIdentity(locked),
+    });
     ui.game.dataset.ready = Phaser.VERSION;
+  }
+
+  useCharacter(id) {
+    this.character = characters.find(item => item.id === id);
+    this.walkDistance = 0;
+    this.player.setTexture(poseKey(id, this.facing, 0));
+  }
+
+  lockIdentity(locked) {
+    this.identityLocked = locked;
+    this.player.setVelocity(0);
+    this.touch.clear();
+    this.input.keyboard.resetKeys();
+    this.input.keyboard.enabled = !locked;
+    if (locked) ui.prompt.hidden = true;
   }
 
   resizeCamera({ width, height }) {
@@ -174,7 +205,7 @@ class Campus extends Phaser.Scene {
   }
 
   interact() {
-    if (ui['full-map'].open) return;
+    if (this.identityLocked || ui['full-map'].open) return;
     if (this.openDialog) {
       this.closeDialog(true);
       return;
@@ -208,7 +239,7 @@ class Campus extends Phaser.Scene {
   }
 
   toggleMap() {
-    if (this.openDialog) return;
+    if (this.identityLocked || this.openDialog) return;
     const map = ui['full-map'];
     if (map.open) {
       map.close();
@@ -221,10 +252,11 @@ class Campus extends Phaser.Scene {
   }
 
   resetRun() {
+    if (this.identityLocked) return;
     this.closeDialog();
     this.setStep(0);
     this.player.body.reset(spawn.x, spawn.y);
-    this.player.setTexture(spawn.facing + '0');
+    this.player.setTexture(poseKey(this.character.id, spawn.facing, 0));
     this.facing = spawn.facing;
     this.walkDistance = 0;
     this.lastPosition = { x: spawn.x, y: spawn.y };
@@ -233,7 +265,7 @@ class Campus extends Phaser.Scene {
   }
 
   renderPrompt(nearby, time) {
-    const hidden = !nearby || Boolean(this.openDialog) || ui['full-map'].open;
+    const hidden = this.identityLocked || !nearby || Boolean(this.openDialog) || ui['full-map'].open;
     ui.prompt.hidden = hidden;
     if (hidden) return;
     const camera = this.cameras.main;
@@ -249,14 +281,27 @@ class Campus extends Phaser.Scene {
 
   renderAmbient(time) {
     const effects = this.ambient.clear();
+    const pondEffects = this.pondEffects.clear();
     if (reducedMotion.matches) return;
     const visible = this.cameras.main.worldView;
-    if (Phaser.Geom.Rectangle.Contains(visible, pondX + 38, pondY + 33)) {
+    const [pondX, pondY, pondWidth, pondHeight] = yishaoPond.rect;
+    if (visible.right > pondX && visible.left < pondX + pondWidth &&
+        visible.bottom > pondY && visible.top < pondY + pondHeight) {
+      for (const [x, y, delay] of yishaoPond.ripples) {
+        const phase = ((time + delay) % 1900) / 1900;
+        const radius = 2 + Math.round(phase * 6);
+        const centerX = pondX + x;
+        const centerY = pondY + y;
+        pondEffects.lineStyle(1, 0xe9ddb4, Math.sin(phase * Math.PI) * .58)
+          .strokeEllipse(centerX, centerY, radius * 2, Math.max(2, radius));
+      }
+      const [mistX, mistY] = yishaoPond.mist;
       for (let i = 0; i < 3; i++) {
-        const phase = (time / 1900 + i / 3) % 1;
-        const width = 4 + Math.round(phase * 16);
-        effects.fillStyle(0xd5e8ca, Math.sin(phase * Math.PI) * .65)
-          .fillRect(pondX + 22 + i * 12 - Math.floor(width / 2), pondY + 24 + i * 9, width, 1);
+        const phase = ((time + i * 430) % 1290) / 1290;
+        const x = pondX + mistX + Math.round(phase * 10);
+        const y = pondY + mistY - 5 - Math.round(phase * 6);
+        pondEffects.fillStyle(0xf3edde, Math.sin(phase * Math.PI) * .18)
+          .fillEllipse(x, y, 3 + phase * 7, 2 + phase * 3);
       }
     }
     for (const [x, y, delay] of driftingLeaves) {
@@ -276,7 +321,7 @@ class Campus extends Phaser.Scene {
     this.lastPosition.x = this.player.x;
     this.lastPosition.y = this.player.y;
     const pressed = (direction, key, arrow) => keys[key].isDown || keys[arrow].isDown || this.touch.has(direction);
-    const frozen = this.openDialog || ui['full-map'].open;
+    const frozen = this.identityLocked || this.openDialog || ui['full-map'].open;
     const x = Number(pressed('right', 'D', 'RIGHT')) - Number(pressed('left', 'A', 'LEFT'));
     const y = Number(pressed('down', 'S', 'DOWN')) - Number(pressed('up', 'W', 'UP'));
     const moving = !frozen && (x !== 0 || y !== 0);
@@ -288,19 +333,15 @@ class Campus extends Phaser.Scene {
     }
     const walking = moving && distance > .05;
     this.walkDistance = walking
-      ? (this.walkDistance + distance) % (playerArt.walkFrames * strideFrameDistance) : 0;
+      ? (this.walkDistance + distance) % (this.character.walkFrames * strideFrameDistance) : 0;
     const frame = walking ? 1 + Math.floor(this.walkDistance / strideFrameDistance) : 0;
-    const key = this.facing + frame;
+    const key = poseKey(this.character.id, this.facing, frame);
     if (this.player.texture.key !== key) this.player.setTexture(key);
     this.player.setDepth(this.player.y);
 
     const nearby = this.nearest();
     this.renderPrompt(nearby, time);
-    const loc = this.player.x > 1420 ? '东门' :
-      Phaser.Math.Distance.Between(this.player.x, this.player.y, library.x, library.y) < 60 ? '图书馆' :
-      this.player.x > 938 && this.player.x < 1150 && this.player.y < 510 && this.player.y > 388 ? '东门广场' :
-      this.player.y > 700 ? '南侧教学区' :
-      this.player.x > 1150 && this.player.y > 525 ? '东侧草坪' : '校园';
+    const loc = locationAt(this.player.x, this.player.y);
     ui.location.lastElementChild.textContent = loc;
 
     if (time >= this.mapTick) {
@@ -321,7 +362,7 @@ class Campus extends Phaser.Scene {
     }
     if (debug) {
       Object.assign(ui.game.dataset, {
-        x: Math.round(this.player.x), y: Math.round(this.player.y), frame,
+        x: Math.round(this.player.x), y: Math.round(this.player.y), frame, pose: key,
         cameraX: Math.round(this.cameras.main.scrollX), cameraY: Math.round(this.cameras.main.scrollY),
         near: nearby?.id ?? '',
         blocked: ['left', 'right', 'up', 'down'].filter(side => this.player.body.blocked[side]).join(','),
@@ -359,6 +400,7 @@ function bindUI(scene) {
   for (const button of document.querySelectorAll('[data-move]')) {
     const direction = button.dataset.move;
     button.addEventListener('pointerdown', event => {
+      if (scene.identityLocked || scene.openDialog || ui['full-map'].open) return;
       button.setPointerCapture(event.pointerId);
       scene.touch.add(direction);
     });
@@ -366,7 +408,7 @@ function bindUI(scene) {
   }
   window.addEventListener('blur', () => scene.touch.clear());
   window.addEventListener('keydown', event => {
-    if (event.repeat || event.ctrlKey || event.altKey || event.metaKey) return;
+    if (scene.identityLocked || event.isComposing || event.repeat || event.ctrlKey || event.altKey || event.metaKey) return;
     if (event.code === 'KeyE') {
       event.preventDefault();
       scene.interact();

@@ -1,0 +1,23 @@
+# Cocos 工程和验收资料单独保留
+/game-client/
+/screenshots/cocos-*.png
+/docs/superpowers/plans/*-cocos-campus.md
+
+# 本机工具、临时导入与测试文件
+/.work/
+/.garden-data/
+/.canteen-data/
+/.task-data/
+/.grass-work/
+/.ruc-map-transfer/
+/deepseek-worker.mjs
+/dist/.browser-qa.html
+node_modules/
+.env
+.env.*
+!.env.example
+
+# 旧构建缓存；当前发布文件在 dist/site 和 dist/RUC物语.html
+/dist/assets/
+/dist/src/
+/dist/vendor/

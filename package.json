@@ -1,11 +1,12 @@
 {
-  "name": "ruc-campus-walk",
+  "name": "ruc-wuyu",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "node tools/serve.mjs . 4173",
+    "test": "node --test tests/*.test.mjs",
     "build": "node tools/build.mjs",
-    "preview": "node tools/serve.mjs dist 4174 /campus"
+    "preview": "node tools/serve.mjs dist/site 4174 /campus"
   }
 }
